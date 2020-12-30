@@ -114,8 +114,14 @@ public class FloatingWindow extends Service {
                         layoutParams.x = initialX + (int) (initialTouchX - motionEvent.getRawX());
                         layoutParams.y = initialY + (int) (motionEvent.getRawY() - initialTouchY);
                         if (clickDuration < MAX_CLICK_DURATION) {
-                            openapp.setVisibility(View.GONE);
-                            window_header.setVisibility(View.VISIBLE);
+                            if (openapp.getVisibility()==View.VISIBLE){
+                                openapp.setVisibility(View.GONE);
+                                window_header.setVisibility(View.VISIBLE);
+                            }else {
+                                openapp.setVisibility(View.VISIBLE);
+                                window_header.setVisibility(View.GONE);
+                            }
+
                             Toast.makeText(FloatingWindow.this, "Hi", Toast.LENGTH_SHORT).show();
                         } else {
                             if (layoutParams.y > (height * 0.6))
