@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">YouTube Test</string>
+    <string name="app_name">Floating Widget</string>
 
     <string name="add_note">Add Note</string>
     <string name="notification_channel_general">QuickNote</string>

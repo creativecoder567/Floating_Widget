@@ -1,4 +1,4 @@
-package com.jsb.youtubetest;
+package com.jsb.widget;
 
 import org.junit.Test;
 
