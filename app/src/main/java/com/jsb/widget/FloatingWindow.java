@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,10 +23,12 @@ public class FloatingWindow extends Service {
 
     WindowManager wm;
     LinearLayout window_root;
+    LinearLayout window_header;
     int LAYOUT_FLAG;
     View mFloatingView;
     ImageView imageClose;
     double width, height;
+    ImageView openapp;
 
     @Nullable
     @Override
@@ -43,12 +46,12 @@ public class FloatingWindow extends Service {
 
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.window, null);
 
-        final WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT,WindowManager.LayoutParams.WRAP_CONTENT
-        ,LAYOUT_FLAG, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,PixelFormat.TRANSLUCENT);
+        final WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT
+                , LAYOUT_FLAG, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
 
-        layoutParams.gravity =Gravity.TOP|Gravity.RIGHT;
-        layoutParams.x=0;
-        layoutParams.y=100;
+        layoutParams.gravity = Gravity.TOP | Gravity.RIGHT;
+        layoutParams.x = 0;
+        layoutParams.y = 100;
 
         final WindowManager.LayoutParams imageParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
@@ -60,18 +63,29 @@ public class FloatingWindow extends Service {
         imageClose.setImageResource(R.drawable.ic_close_white);
         imageClose.setVisibility(View.INVISIBLE);
 
-        wm.addView(imageClose,imageParams);
-        wm.addView(mFloatingView,layoutParams);
+        openapp = new ImageView(this);
+        openapp.setImageResource(R.mipmap.ic_launcher_round);
+        ViewGroup.LayoutParams butnparams = new ViewGroup.LayoutParams(
+                150, 150);
+        openapp.setLayoutParams(butnparams);
+
+        window_root = mFloatingView.findViewById(R.id.window_root);
+
+        window_header = mFloatingView.findViewById(R.id.window_header);
+
+        window_root.addView(openapp);
+        wm.addView(imageClose, imageParams);
+        wm.addView(mFloatingView, layoutParams);
         mFloatingView.setVisibility(View.VISIBLE);
         height = wm.getDefaultDisplay().getHeight();
         width = wm.getDefaultDisplay().getWidth();
 
-        window_root = mFloatingView.findViewById(R.id.window_root);
+
 
         window_root.setOnTouchListener(new View.OnTouchListener() {
-//            WindowManager.LayoutParams updatepar = layoutParams;
+            //            WindowManager.LayoutParams updatepar = layoutParams;
             int initialX, initialY;
-            float initialTouchX,initialTouchY;
+            float initialTouchX, initialTouchY;
             double x;
             double y;
             double px;
@@ -97,21 +111,23 @@ public class FloatingWindow extends Service {
                     case MotionEvent.ACTION_UP:
                         long clickDuration = Calendar.getInstance().getTimeInMillis() - startClickTime;
                         imageClose.setVisibility(View.GONE);
-                        layoutParams.x = initialX + (int)(initialTouchX-motionEvent.getRawX());
-                        layoutParams.y = initialY + (int)(motionEvent.getRawY() - initialTouchY);
+                        layoutParams.x = initialX + (int) (initialTouchX - motionEvent.getRawX());
+                        layoutParams.y = initialY + (int) (motionEvent.getRawY() - initialTouchY);
                         if (clickDuration < MAX_CLICK_DURATION) {
+                            openapp.setVisibility(View.GONE);
+                            window_header.setVisibility(View.VISIBLE);
                             Toast.makeText(FloatingWindow.this, "Hi", Toast.LENGTH_SHORT).show();
-                        }else {
+                        } else {
                             if (layoutParams.y > (height * 0.6))
                                 stopSelf();
                         }
 
-                        return  true;
+                        return true;
 
                     case MotionEvent.ACTION_MOVE:
 
-                        layoutParams.x = initialX+ (int)(initialTouchX-motionEvent.getRawX());
-                        layoutParams.y = initialY+ (int)(motionEvent.getRawY()-initialTouchY);
+                        layoutParams.x = initialX + (int) (initialTouchX - motionEvent.getRawX());
+                        layoutParams.y = initialY + (int) (motionEvent.getRawY() - initialTouchY);
 
                         wm.updateViewLayout(window_root, layoutParams);
 
@@ -194,10 +210,10 @@ public class FloatingWindow extends Service {
     public void onDestroy() {
         super.onDestroy();
         stopSelf();
-        if (window_root!=null){
+        if (window_root != null) {
             wm.removeView(window_root);
         }
-        if (imageClose!=null){
+        if (imageClose != null) {
             wm.removeView(imageClose);
         }
     }

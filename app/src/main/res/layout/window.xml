@@ -3,11 +3,14 @@
     android:id="@+id/window_root"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:orientation="vertical"
-    android:weightSum="1">
-
+    android:orientation="vertical">
+<LinearLayout
+    android:id="@+id/window_header"
+    android:visibility="gone"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
     <LinearLayout
-        android:id="@+id/window_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/windowHeader"
@@ -66,5 +69,7 @@
             android:tintMode="src_in" />
 
     </LinearLayout>
+</LinearLayout>
+
 
 </LinearLayout>
