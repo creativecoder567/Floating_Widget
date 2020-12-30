@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+
+    <color name="windowHeader">#FF888888</color>
+    <color name="windowHeaderText">#FFFFFFFF</color>
+    <color name="windowHeaderClose">#FFEE7777</color>
+    <color name="windowBody">#FFDDDDDD</color>
+    <color name="windowSend">#FF448844</color>
+</resources>
