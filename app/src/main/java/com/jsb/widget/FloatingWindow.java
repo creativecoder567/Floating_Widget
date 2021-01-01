@@ -46,15 +46,15 @@ public class FloatingWindow extends Service {
 
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.window, null);
 
-        final WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT
+        final WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT
                 , LAYOUT_FLAG, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
 
-        layoutParams.gravity = Gravity.TOP | Gravity.RIGHT;
+        layoutParams.gravity = Gravity.TOP | Gravity.END;
         layoutParams.x = 0;
         layoutParams.y = 100;
 
         final WindowManager.LayoutParams imageParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
+                LAYOUT_FLAG, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
 
         imageParams.gravity = Gravity.BOTTOM | Gravity.CENTER;
         imageParams.y = 100;
