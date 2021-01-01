@@ -1,9 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/window_root"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="match_parent"
     android:orientation="vertical">
+    <RelativeLayout
+        android:id="@+id/window_root"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    <!--View while view is collapsed-->
+    <LinearLayout
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/openapp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_launcher_round">
+
+        </ImageView>
+    </LinearLayout>
+    <!--View while view is expanded-->
 <LinearLayout
     android:id="@+id/window_header"
     android:visibility="gone"
@@ -59,8 +78,8 @@
 
         <ImageButton
             android:id="@+id/content_button"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:layout_gravity="end|center_vertical"
             android:layout_margin="4dp"
             android:background="?android:attr/selectableItemBackground"
@@ -70,6 +89,6 @@
 
     </LinearLayout>
 </LinearLayout>
+    </RelativeLayout>
 
-
-</LinearLayout>
+</FrameLayout>
