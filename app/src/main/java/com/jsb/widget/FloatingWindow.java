@@ -53,7 +53,7 @@ public class FloatingWindow extends Service {
 
 
         final WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT
-                , LAYOUT_FLAG, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
+                , LAYOUT_FLAG, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, PixelFormat.TRANSLUCENT);
 
         layoutParams.gravity = Gravity.TOP | Gravity.END;
         layoutParams.x = 0;
@@ -151,15 +151,15 @@ public class FloatingWindow extends Service {
         });
 
 
-        content_text.setOnClickListener(new View.OnClickListener() {
+/*        content_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(FloatingWindow.this, "Hello", Toast.LENGTH_SHORT).show();
-                layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
-//                layoutParams.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
+                layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
+                layoutParams.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
                 wm.updateViewLayout(mFloatingView,layoutParams);
             }
-        });
+        });*/
 
         return START_STICKY;
     }
