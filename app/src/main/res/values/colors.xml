@@ -7,6 +7,6 @@
     <color name="windowHeader">#FF888888</color>
     <color name="windowHeaderText">#FFFFFFFF</color>
     <color name="windowHeaderClose">#FFEE7777</color>
-    <color name="windowBody">#FFDDDDDD</color>
+    <color name="windowBody">#F8F2F2</color>
     <color name="windowSend">#FF448844</color>
 </resources>

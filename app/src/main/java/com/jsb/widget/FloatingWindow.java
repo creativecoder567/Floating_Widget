@@ -10,6 +10,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -29,6 +32,8 @@ public class FloatingWindow extends Service {
     ImageView imageClose;
     double width, height;
     ImageView openapp;
+    EditText content_text;
+    ImageButton content_button;
 
     @Nullable
     @Override
@@ -39,12 +44,13 @@ public class FloatingWindow extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         else
             LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_PHONE;
 
-        mFloatingView = LayoutInflater.from(this).inflate(R.layout.window, null);
 
         final WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT
                 , LAYOUT_FLAG, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
@@ -59,9 +65,6 @@ public class FloatingWindow extends Service {
         imageParams.gravity = Gravity.BOTTOM | Gravity.CENTER;
         imageParams.y = 100;
         wm = (WindowManager) getSystemService(WINDOW_SERVICE);
-        imageClose = new ImageView(this);
-        imageClose.setImageResource(R.drawable.ic_close_white);
-        imageClose.setVisibility(View.INVISIBLE);
 
        /* openapp = new ImageView(this);
         openapp.setImageResource(R.mipmap.ic_launcher_round);
@@ -69,17 +72,13 @@ public class FloatingWindow extends Service {
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         openapp.setLayoutParams(butnparams);*/
 
-        window_root = mFloatingView.findViewById(R.id.window_root);
 
-        window_header = mFloatingView.findViewById(R.id.window_header);
-        openapp =mFloatingView.findViewById(R.id.openapp);
 //        window_root.addView(openapp);
         wm.addView(imageClose, imageParams);
         wm.addView(mFloatingView, layoutParams);
         mFloatingView.setVisibility(View.VISIBLE);
         height = wm.getDefaultDisplay().getHeight();
         width = wm.getDefaultDisplay().getWidth();
-
 
 
         window_root.setOnTouchListener(new View.OnTouchListener() {
@@ -114,15 +113,13 @@ public class FloatingWindow extends Service {
                         layoutParams.x = initialX + (int) (initialTouchX - motionEvent.getRawX());
                         layoutParams.y = initialY + (int) (motionEvent.getRawY() - initialTouchY);
                         if (clickDuration < MAX_CLICK_DURATION) {
-                            if (openapp.getVisibility()==View.VISIBLE){
+                            if (openapp.getVisibility() == View.VISIBLE) {
                                 openapp.setVisibility(View.GONE);
                                 window_header.setVisibility(View.VISIBLE);
-                            }else {
+                            } else {
                                 openapp.setVisibility(View.VISIBLE);
                                 window_header.setVisibility(View.GONE);
                             }
-
-                            Toast.makeText(FloatingWindow.this, "Hi", Toast.LENGTH_SHORT).show();
                         } else {
                             if (layoutParams.y > (height * 0.6))
                                 stopSelf();
@@ -153,63 +150,46 @@ public class FloatingWindow extends Service {
             }
         });
 
+
+        content_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(FloatingWindow.this, "Hello", Toast.LENGTH_SHORT).show();
+                layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
+//                layoutParams.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
+                wm.updateViewLayout(mFloatingView,layoutParams);
+            }
+        });
+
         return START_STICKY;
+    }
+
+
+    private void init() {
+        mFloatingView = LayoutInflater.from(this).inflate(R.layout.window, null);
+
+        imageClose = new ImageView(this);
+        imageClose.setImageResource(R.drawable.ic_close_white);
+        imageClose.setVisibility(View.INVISIBLE);
+
+        window_root = mFloatingView.findViewById(R.id.window_root);
+
+        window_header = mFloatingView.findViewById(R.id.window_header);
+        openapp = mFloatingView.findViewById(R.id.openapp);
+        content_text = mFloatingView.findViewById(R.id.content_text);
+        content_button = mFloatingView.findViewById(R.id.content_button);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-
-
-      /*  window_root = new LinearLayout(this);
-        window_root.setBackgroundColor(Color.TRANSPARENT);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        window_root.setLayoutParams(layoutParams);
-
-        final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                PixelFormat.TRANSLUCENT);
-
-        params.gravity = Gravity.CENTER;
-        params.x = 0;
-        params.y = 0;*/
-
-       /* WindowManager.LayoutParams imageParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
-
-        imageParams.gravity = Gravity.BOTTOM | Gravity.CENTER;
-        imageParams.y = 100;*/
-
-
-//        wm.addView(mFloatingView,layoutParams);
-//        mFloatingView.setVisibility(View.VISIBLE);
-
-      /*  ImageView openapp = new ImageView(this);
-        openapp.setImageResource(R.mipmap.ic_launcher_round);
-        ViewGroup.LayoutParams butnparams = new ViewGroup.LayoutParams(
-                150, 150);
-        openapp.setLayoutParams(butnparams);*/
-/*
-        window_root.addView(openapp);
-        wm.addView(window_root, params);
-        wm.addView(imageClose, imageParams);*/
-
-
-
-
-    /*    window_root.setOnClickListener(new View.OnClickListener() {
+        init();
+        content_button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Intent home = new Intent(FloatingWindow.this, MainActivity.class);
-                home.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(home);
+            public void onClick(View v) {
+                Toast.makeText(FloatingWindow.this, content_text.getText().toString(), Toast.LENGTH_SHORT).show();
             }
-        });*/
-
-
+        });
     }
 
     @Override
