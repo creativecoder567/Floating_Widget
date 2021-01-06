@@ -1,15 +1,19 @@
 package com.jsb.widget;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.IBinder;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -34,6 +38,8 @@ public class FloatingWindow extends Service {
     ImageView openapp;
     EditText content_text;
     ImageButton content_button;
+    private boolean wasInFocus = true;
+    WindowManager.LayoutParams layoutParams;
 
     @Nullable
     @Override
@@ -51,10 +57,14 @@ public class FloatingWindow extends Service {
         else
             LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_PHONE;
 
+        DisplayMetrics metrics = this.getResources().getDisplayMetrics();
+        int layout_width = (int) (metrics.widthPixels * 0.7f);
+        int layout_height = (int) (metrics.heightPixels * 0.45f);
 
-        final WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT
+         layoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT
                 , LAYOUT_FLAG, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, PixelFormat.TRANSLUCENT);
 
+//         WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
         layoutParams.gravity = Gravity.TOP | Gravity.END;
         layoutParams.x = 0;
         layoutParams.y = 100;
@@ -85,15 +95,20 @@ public class FloatingWindow extends Service {
             //            WindowManager.LayoutParams updatepar = layoutParams;
             int initialX, initialY;
             float initialTouchX, initialTouchY;
-            double x;
-            double y;
-            double px;
-            double py;
             long startClickTime;
             int MAX_CLICK_DURATION = 200;
-
+            long startTime = System.currentTimeMillis();
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                if (System.currentTimeMillis() - startTime <= 300) {
+                    return false;
+                }
+             /*   if (isViewInBounds(mFloatingView, (int) (motionEvent.getRawX()), (int) (motionEvent.getRawY()))) {
+                    editTextReceiveFocus();
+                } else {
+                    editTextDontReceiveFocus();
+                }*/
 
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
@@ -116,7 +131,9 @@ public class FloatingWindow extends Service {
                             if (openapp.getVisibility() == View.VISIBLE) {
                                 openapp.setVisibility(View.GONE);
                                 window_header.setVisibility(View.VISIBLE);
+                                editTextReceiveFocus();
                             } else {
+                                editTextDontReceiveFocus();
                                 openapp.setVisibility(View.VISIBLE);
                                 window_header.setVisibility(View.GONE);
                             }
@@ -180,6 +197,47 @@ public class FloatingWindow extends Service {
         content_button = mFloatingView.findViewById(R.id.content_button);
     }
 
+    private boolean isViewInBounds(View view, int x, int y) {
+        Rect outRect = new Rect();
+        int[] location = new int[2];
+        view.getDrawingRect(outRect);
+        view.getLocationOnScreen(location);
+        outRect.offset(location[0], location[1]);
+        return outRect.contains(x, y);
+    }
+
+    private void editTextReceiveFocus() {
+        if (!wasInFocus) {
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
+            wm.updateViewLayout(mFloatingView, layoutParams);
+            wasInFocus = true;
+        }
+    }
+
+    private void editTextDontReceiveFocus() {
+        if (wasInFocus) {
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
+            wm.updateViewLayout(mFloatingView, layoutParams);
+            wasInFocus = false;
+            hideKeyboard(this, content_text);
+        }
+    }
+
+    private void hideKeyboard(Context context, View view) {
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    public void showSoftKeyboard(View view) {
+        if (view.requestFocus()) {
+            InputMethodManager imm = (InputMethodManager)
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+        }
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -188,6 +246,17 @@ public class FloatingWindow extends Service {
             @Override
             public void onClick(View v) {
                 Toast.makeText(FloatingWindow.this, content_text.getText().toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        content_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
+                layoutParams.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
+                wm.updateViewLayout(mFloatingView, layoutParams);
+                wasInFocus = true;
+                showSoftKeyboard(v);
             }
         });
     }
