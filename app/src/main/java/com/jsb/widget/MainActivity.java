@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button start_stop;
     AlertDialog alert;
-    boolean started = false;
+    public static boolean started = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -140,6 +140,7 @@ public class FloatingWindow extends Service {
                         } else {
                             if (layoutParams.y > (height * 0.6))
                                 stopSelf();
+                            MainActivity.started=false;
                         }
 
                         return true;
@@ -265,6 +266,7 @@ public class FloatingWindow extends Service {
     public void onDestroy() {
         super.onDestroy();
         stopSelf();
+        MainActivity.started=false;
         if (window_root != null) {
             wm.removeView(mFloatingView);
         }
